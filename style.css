@@ -1,0 +1,43 @@
+* {
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #f4f5f7;
+    padding: 20px;
+}
+
+.container {
+    display: flex;
+    gap: 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.drop-zone {
+    background-color: #ebecf0;
+    border-radius: 8px;
+    width: 300px;
+    min-height: 400px;
+    padding: 15px;
+}
+
+.drop-zone h2 {
+    font-size: 18px;
+    margin-top: 0;
+    color: #5e6c84;
+}
+
+.draggable {
+    background-color: white;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    box-shadow: 0 1px 0 rgba(9,30,66,.25);
+    cursor: grab;
+}
+
+.draggable:active {
+    cursor: grabbing;
+}

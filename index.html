@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drag and Drop Task Board</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="drop-zone" id="todo" ondrop="drop(event)" ondragover="allowDrop(event)">
+            <h2>To Do</h2>
+            <div class="draggable" id="task1" draggable="true" ondragstart="drag(event)">
+                Task 1: Build GitHub project
+            </div>
+            <div class="draggable" id="task2" draggable="true" ondragstart="drag(event)">
+                Task 2: Learn about GitHub Pages
+            </div>
+        </div>
+
+        <div class="drop-zone" id="in-progress" ondrop="drop(event)" ondragover="allowDrop(event)">
+            <h2>In Progress</h2>
+        </div>
+
+        <div class="drop-zone" id="completed" ondrop="drop(event)" ondragover="allowDrop(event)">
+            <h2>Completed</h2>
+        </div>
+    </div>
+
+    <script>
+        function allowDrop(ev) {
+            ev.preventDefault();
+        }
+
+        function drag(ev) {
+            ev.dataTransfer.setData("text", ev.target.id);
+        }
+
+        function drop(ev) {
+            ev.preventDefault();
+            var data = ev.dataTransfer.getData("text");
+            ev.target.appendChild(document.getElementById(data));
+        }
+    </script>
+</body>
+</html>
