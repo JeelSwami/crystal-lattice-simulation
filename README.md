@@ -38,6 +38,7 @@ The dashboard displays real-time energy readouts in electron-volts (eV) as ions 
 
 ---
 
+## How to Run This Project Locally
 ##  How to Run This Project Locally
 
 1. **Download** or clone this repository folder onto your computer.
