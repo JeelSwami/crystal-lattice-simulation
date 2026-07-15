@@ -3,9 +3,6 @@
 
 An interactive, single-page web simulation designed to demonstrate the fundamental principles of **Condensed Matter Physics** and **Solid-State Chemistry**. Users can construct an atomic 2D cross-section of a Sodium Chloride (NaCl) crystal lattice using native HTML5 drag-and-drop operations.
 
-## Live Demo
-*(Once you turn on GitHub Pages, insert your direct link right here!)*
-
 ---
 
 ##  Physics Concepts Explored
