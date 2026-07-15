@@ -1,3 +1,4 @@
+
 #  Crystal Lattice Simulator (Condensed Matter Physics)
 
 An interactive, single-page web simulation designed to demonstrate the fundamental principles of **Condensed Matter Physics** and **Solid-State Chemistry**. Users can construct an atomic 2D cross-section of a Sodium Chloride (NaCl) crystal lattice using native HTML5 drag-and-drop operations.
@@ -38,6 +39,7 @@ The dashboard displays real-time energy readouts in electron-volts (eV) as ions 
 ---
 
 ## How to Run This Project Locally
+##  How to Run This Project Locally
 
 1. **Download** or clone this repository folder onto your computer.
 2. Locate the file named `index.html`.
