@@ -3,31 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Drag and Drop Task Board</title>
+    <title>Condensed Matter Physics: Crystal Lattice Simulator</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <div class="drop-zone" id="todo" ondrop="drop(event)" ondragover="allowDrop(event)">
-            <h2>To Do</h2>
-            <div class="draggable" id="task1" draggable="true" ondragstart="drag(event)">
-                Task 1: Build GitHub project
+    <header>
+        <h1>Crystal Lattice Simulator</h1>
+        <p>Condensed Matter Physics: Arrange Ions to Maximize Coulombic Attraction and Stabilize the Crystal!</p>
+    </header>
+
+    <div class="simulation-container">
+        <!-- Supply Bin -->
+        <div class="atom-bin">
+            <h3>Ion Supply Bin</h3>
+            <p class="instructions">Drag ions into the grid nodes to minimize total energy:</p>
+            
+            <div class="atom-source">
+                <div class="atom sodium" id="na" draggable="true" ondragstart="drag(event)">Na⁺</div>
+                <span>Sodium (Cation)</span>
             </div>
-            <div class="draggable" id="task2" draggable="true" ondragstart="drag(event)">
-                Task 2: Learn about GitHub Pages
+            
+            <div class="atom-source">
+                <div class="atom chlorine" id="cl" draggable="true" ondragstart="drag(event)">Cl⁻</div>
+                <span>Chlorine (Anion)</span>
             </div>
+            
+            <!-- Dashboard Tracker -->
+            <div class="dashboard">
+                <h4>System Stability</h4>
+                <p>Lattice Energy: <span id="energy-score">0.00</span> eV</p>
+                <p id="status-msg" class="neutral">Lattice is empty.</p>
+            </div>
+
+            <button onclick="resetGrid()" class="reset-btn">Clear Lattice</button>
         </div>
 
-        <div class="drop-zone" id="in-progress" ondrop="drop(event)" ondragover="allowDrop(event)">
-            <h2>In Progress</h2>
-        </div>
-
-        <div class="drop-zone" id="completed" ondrop="drop(event)" ondragover="allowDrop(event)">
-            <h2>Completed</h2>
+        <!-- The 3x3 Crystal Lattice Grid -->
+        <div class="lattice-grid">
+            <div class="grid-node" id="node-0" data-index="0" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+            <div class="grid-node" id="node-1" data-index="1" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+            <div class="grid-node" id="node-2" data-index="2" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+            <div class="grid-node" id="node-3" data-index="3" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+            <div class="grid-node" id="node-4" data-index="4" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+            <div class="grid-node" id="node-5" data-index="5" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+            <div class="grid-node" id="node-6" data-index="6" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+            <div class="grid-node" id="node-7" data-index="7" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+            <div class="grid-node" id="node-8" data-index="8" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
         </div>
     </div>
 
     <script>
+        // Track lattice contents in a 1D array representing the 3x3 grid
+        let latticeState = Array(9).fill(null);
+
         function allowDrop(ev) {
             ev.preventDefault();
         }
@@ -38,8 +66,82 @@
 
         function drop(ev) {
             ev.preventDefault();
-            var data = ev.dataTransfer.getData("text");
-            ev.target.appendChild(document.getElementById(data));
+            let targetNode = ev.target.closest('.grid-node');
+            let index = parseInt(targetNode.getAttribute('data-index'));
+            
+            // Only drop if node is completely empty
+            if (targetNode && !latticeState[index]) {
+                let ionType = ev.dataTransfer.getData("text"); // 'na' or 'cl'
+                let originalAtom = document.getElementById(ionType);
+                
+                let clonedAtom = originalAtom.cloneNode(true);
+                clonedAtom.id = ionType + "-" + Date.now(); 
+                
+                targetNode.appendChild(clonedAtom);
+                latticeState[index] = ionType;
+                
+                calculateLatticeEnergy();
+            }
+        }
+
+        function calculateLatticeEnergy() {
+            let energy = 0;
+            let ionCount = 0;
+            
+            // Define basic 2D matrix adjacencies for a 3x3 grid
+            const neighbors = [,       // Node 0 neighbors,    // Node 1,       // Node 2,    // Node 3, // Node 4,    // Node 5,       // Node 6,    // Node 7
+                [5, 7]        // Node 8
+            ];
+
+            // Evaluate Coulombic interactions between adjacent nodes
+            for (let i = 0; i < 9; i++) {
+                if (latticeState[i]) {
+                    ionCount++;
+                    neighbors[i].forEach(neighborIdx => {
+                        if (latticeState[neighborIdx]) {
+                            if (latticeState[i] === latticeState[neighborIdx]) {
+                                energy += 2.5; // Repulsion penalty (same charges)
+                            } else {
+                                energy -= 3.5; // Attraction stability bonus (opposite charges)
+                            }
+                        }
+                    });
+                }
+            }
+
+            // Halve the energy because interactions are counted twice per pair
+            energy = energy / 2;
+
+            document.getElementById('energy-score').innerText = energy.toFixed(2);
+            updateStatusMessage(energy, ionCount);
+        }
+
+        function updateStatusMessage(energy, count) {
+            let msg = document.getElementById('status-msg');
+            if (count === 0) {
+                msg.innerText = "Lattice is empty.";
+                msg.className = "neutral";
+            } else if (energy > 0) {
+                msg.innerText = "Unstable! Identical charges are too close.";
+                msg.className = "unstable";
+            } else if (energy < 0 && count < 9) {
+                msg.innerText = "Stabilizing... keep building!";
+                msg.className = "stable";
+            } else if (energy <= -24 && count === 9) {
+                msg.innerText = "Perfect Crystal Lattice achieved!";
+                msg.className = "perfect";
+            } else {
+                msg.innerText = "Sub-optimal arrangement.";
+                msg.className = "neutral";
+            }
+        }
+
+        function resetGrid() {
+            const nodes = document.querySelectorAll('.grid-node');
+            nodes.forEach(node => node.innerHTML = '');
+            latticeState.fill(null);
+            document.getElementById('energy-score').innerText = "0.00";
+            updateStatusMessage(0, 0);
         }
     </script>
 </body>
